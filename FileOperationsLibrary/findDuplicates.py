@@ -1,0 +1,35 @@
+import hashlib
+import os
+import defaultPath as dp
+
+def findDup(pathToSearch="None"):
+    flagFoundDuplicates = 0
+    # Create a dictionary to save md5 as key and filename as value
+    md5OfFiles = {}
+    # If user not send any path to search, program will call to function that will set default path per Operation System
+    for root, dirs, files in os.walk(pathToSearch):
+        for name in files:
+            md5Hash = hashlib.md5()
+            workFile = open(os.path.abspath(os.path.join(root, name)), "rb")
+            content = workFile.read()
+            md5Hash.update(content)
+            digest = md5Hash.hexdigest()
+            # If the key already exist, add the filename to the list
+            if (digest in md5OfFiles.keys()):
+            md5OfFiles[digest].append(os.path.abspath(os.path.join(root, name)))
+            # If the key not exist create new list in the key and add the filename to the list
+            else:
+            md5OfFiles[digest].append(os.path.abspath(os.path.join(root, name)))
+
+
+    # Check if any md5-key has more than 1 elements in his list (Mean: There is duplicates files)
+    for v in md5OfFiles:
+        if ((len(md5OfFiles[v])) > 1):
+            flagFoundDuplicates = 1 # Turn the flag
+            print("These #", len(md5OfFiles[v]), " files are duplicates: ", md5OfFiles[v])
+
+    if flagFoundDuplicates == 0: # If the flag still down - There is no duplicates found
+        print("There is no duplicates files")
+
+    return
+
